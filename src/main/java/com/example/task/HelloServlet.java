@@ -33,16 +33,16 @@ public class HelloServlet extends HttpServlet {
         String url = "jdbc:mysql://localhost:3306/world";
         String user = "root";
         String password = "Just4Freedom.";
-        String country = req.getParameter("country");
+        String code = req.getParameter("code");
         List<String> cities = new ArrayList<>();
         try {
             Class.forName(driver);
             connection = DriverManager.getConnection(url, user, password);
             System.out.println("connected to mySQL database");
             statement = connection.createStatement();
-            ResultSet result = statement.executeQuery("select *from city where countryCode='\" + country + \'");
+            ResultSet result = statement.executeQuery("select *from city where countryCode='"+code+"' ");
             while (result.next()){
-                String cityName = result.getString("cityName");
+                String cityName = result.getString("Name");
                 List<String> cityNames = new ArrayList<>();
                 cityNames.add(cityName);
                 cities.add(String.valueOf(cityNames));
@@ -58,14 +58,8 @@ public class HelloServlet extends HttpServlet {
                 e.printStackTrace();
             }
         }
-
+        req.setAttribute("cities",cities);
         getServletContext().getRequestDispatcher("/cities.jsp").forward(req, resp);
 
-//        try {
-//            statement = (Statement) connection.createStatement();
-//
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 }
