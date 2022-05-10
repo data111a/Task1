@@ -33,14 +33,17 @@ public class HelloServlet extends HttpServlet {
         String url = "jdbc:mysql://localhost:3306/world";
         String user = "root";
         String password = "Just4Freedom.";
-        String code = req.getParameter("code");
+        String county = req.getParameter("country");
         List<String> cities = new ArrayList<>();
         try {
             Class.forName(driver);
             connection = DriverManager.getConnection(url, user, password);
             System.out.println("connected to mySQL database");
             statement = connection.createStatement();
-            ResultSet result = statement.executeQuery("select *from city where countryCode='"+code+"' ");
+            ResultSet result = statement.executeQuery("select c.Name from city as c\n" +
+                    "left join  country as ctr\n" +
+                    "on c.countryCode=ctr.code\n" +
+                    "where ctr.name=\'" + county + "\'");
             while (result.next()){
                 String cityName = result.getString("Name");
                 List<String> cityNames = new ArrayList<>();
@@ -58,7 +61,7 @@ public class HelloServlet extends HttpServlet {
                 e.printStackTrace();
             }
         }
-        req.setAttribute("cities",cities);
+        req.setAttribute("cities",cities);//ბრჭტყალებში რა სახელსაც დაერკმევა, მძიმის მარჯვნივ ეს შენი ლისტი
         getServletContext().getRequestDispatcher("/cities.jsp").forward(req, resp);
 
     }
